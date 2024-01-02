@@ -17,7 +17,7 @@ export default function SignUp() {
     try {
       e.preventDefault()
       setLoading(true)
-      const res = await fetch('/api/auth/signup',
+      const req = await fetch('/api/auth/signup',
         {
           method: 'POST',
           headers: {
@@ -26,7 +26,7 @@ export default function SignUp() {
           body: JSON.stringify(formData),
         }
       )
-      const data = await res.json()
+      const data = await req.json()
       if(data.success === false){
         setErr(data.message)
         setLoading(false)
