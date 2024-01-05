@@ -44,8 +44,8 @@ export default function SignUp() {
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
-      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-6 py-16 px-4 mt-20 rounded-lg bg-slate-200' onSubmit={handleSubmit}>
+        <h1 className='text-3xl text-center font-semibold mb-6'>Sign up</h1>
         <input
           type="text" 
           placeholder='username' 
@@ -55,7 +55,7 @@ export default function SignUp() {
         />
         <input
           type="text" 
-          placeholder='email' 
+          placeholder='email adress' 
           className='border p-3 rounded-lg' 
           id='email' 
           onChange={handleChange}
@@ -69,17 +69,18 @@ export default function SignUp() {
         />
         <button
           disabled={loading} 
-          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
+          className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>
             {loading ? 'Loading...' : 'Sign up'}
         </button>
+        <div className='flex gap-2'>
+        <p>Have an account?</p>
+          <Link to='/sign-in'>
+            <span className='text-blue-700'>Sign in</span>
+          </Link>
+        </div>
+        <hr className='bg-slate-500 w-auto h-1 mx-2'/>
         <OAuth />
       </form>
-      <div className='flex gap-2 mt-5'>
-        <p>Have an account?</p>
-        <Link to='/sign-in'>
-          <span className='text-blue-700'>Sign in</span>
-        </Link>
-      </div>
       {err && <p className='text-red-500 mt-5'>{err}</p>}
     </div>
   )
