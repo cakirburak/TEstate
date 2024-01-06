@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js'
 
 export default function Profile() {
 
@@ -11,30 +12,41 @@ export default function Profile() {
   const [fileUploadErr, setFileUploadErr] = useState(false)
 
   const [formData, setFormData] = useState({})
-  const [err, setErr] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const { currentUser } = useSelector(state => state.user)
+  const [formChanged, setFormChanged] = useState(false)  
+  const { currentUser,loading, error } = useSelector(state => state.user)
+  const dispatch = useDispatch()
   
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     })
+    setFormChanged(true)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("submitted");
-  }
+    try {
+      dispatch(updateUserStart())
+      const req = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'POST',
+        headers: { 'Content-Type' : 'application/json' },
+        body: JSON.stringify(formData)
+      })
 
-  const [isOpen, setIsOpen] = useState(false);
-  
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  }
-  
-  const closeDropdown = () => {
-    setIsOpen(false);
+      const data = await req.json()
+      if(data.success === false) {
+        dispatch(updateUserFailure(data.message))
+        setFormChanged(false)
+        return
+      }
+      
+      dispatch(updateUserSuccess(data))
+      setFormChanged(false)
+    } catch (error) {
+      dispatch(updateUserFailure(error.message))
+      setFormChanged(false)
+    }
   }
 
   useEffect(() => {
@@ -63,6 +75,12 @@ export default function Profile() {
     )
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  }
+  
   return (
     <div className='max-w-prose mx-auto'>
       <div className="relative inline-block text-left bg-slate-200 mt-6 w-full">
@@ -74,10 +92,7 @@ export default function Profile() {
         </button>
 
         {isOpen && (
-          <div
-            className="max-w-full mx-auto origin-top-right relative right-0 mt-2 rounded-md shadow-lg"
-            onBlur={closeDropdown}
-          >
+          <div className="max-w-full mx-auto origin-top-right relative right-0 mt-2 rounded-md shadow-lg">
             <div>
               <div className='max-w-full mx-auto'>
                 <input type="file" ref={fileRef} hidden accept='image/*' onChange={ (e) => setImgFile(e.target.files[0]) }/>
@@ -97,7 +112,8 @@ export default function Profile() {
                     type="text" 
                     placeholder='username' 
                     className='border p-3 rounded-lg' 
-                    id='username' 
+                    id='username'
+                    defaultValue={currentUser.username} 
                     onChange={handleChange}
                   />
                   <input
@@ -105,26 +121,27 @@ export default function Profile() {
                     placeholder='email adress' 
                     className='border p-3 rounded-lg' 
                     id='email' 
+                    defaultValue={currentUser.email}
                     onChange={handleChange}
                   />
                   <input
-                    type="text" 
+                    type="password" 
                     placeholder='password' 
                     className='border p-3 rounded-lg' 
                     id='password' 
                     onChange={handleChange}
                   />
                   <button
-                    disabled={loading} 
-                    className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>
-                      {loading ? 'Loading...' : 'Update'}
+                    disabled={!formChanged || loading}
+                    className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-70'>
+                      {loading ?  'Loading...' : 'Update'}
                   </button>
+                  { error && <p className='text-center text-red-700'>{error}</p>}
                   <div className="flex justify-between mt-5 mx-1">
                     <span className="text-red-700 cursor-pointer">Delete account</span>
-                    <span className="text-red-700 cursor-pointer">Sign out</span>
+                    <span className="text-blue-700 cursor-pointer">Sign out</span>
                   </div>
                 </form>
-                {err && <p className='text-red-500 mt-5'>{err}</p>}
               </div>
             </div>
           </div>
