@@ -62,7 +62,6 @@ export default function Profile() {
       }
     )
   }
-  console.log(formData);
 
   return (
     <div className='max-w-prose mx-auto'>
