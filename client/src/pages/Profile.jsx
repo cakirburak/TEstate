@@ -15,6 +15,7 @@ export default function Profile() {
   }
 
   const handleSubmit = (e) => {
+    e.preventDefault()
     console.log("submitted");
   }
 
@@ -40,12 +41,10 @@ export default function Profile() {
 
         {isOpen && (
           <div
-            className="max-w-prose mx-auto origin-top-right relative right-0 mt-2 rounded-md shadow-lg"
+            className="max-w-full mx-auto origin-top-right relative right-0 mt-2 rounded-md shadow-lg"
             onBlur={closeDropdown}
           >
             <div>
-              {/* Your dropdown menu items go here */}
-
               <div className='max-w-full mx-auto'>
                 <img className='rounded-full mx-auto mt-4' src={currentUser.avatar} alt="Profile Picture" />
                 <form className='flex flex-col gap-6 py-8 px-6 rounded-md bg-slate-200' onSubmit={handleSubmit}>
@@ -75,7 +74,7 @@ export default function Profile() {
                     className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80'>
                       {loading ? 'Loading...' : 'Update'}
                   </button>
-                  <div className="flex justify-between mt-5">
+                  <div className="flex justify-between mt-5 mx-1">
                     <span className="text-red-700 cursor-pointer">Delete account</span>
                     <span className="text-red-700 cursor-pointer">Sign out</span>
                   </div>
