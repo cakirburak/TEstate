@@ -1,12 +1,20 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
+import { app } from '../firebase';
 
 export default function Profile() {
+
+  const fileRef = useRef(null)
+  const [imgFile, setImgFile] = useState(undefined)
+  const [fileUploadPerc, setFileUploadPerc] = useState(0)
+  const [fileUploadErr, setFileUploadErr] = useState(false)
+
   const [formData, setFormData] = useState({})
   const [err, setErr] = useState(null)
   const [loading, setLoading] = useState(false)
   const { currentUser } = useSelector(state => state.user)
-
+  
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,6 +37,33 @@ export default function Profile() {
     setIsOpen(false);
   }
 
+  useEffect(() => {
+    if(imgFile){
+      handleImgUpload(imgFile)
+    }
+  },[imgFile])
+
+  const handleImgUpload = (imgFile) => {
+    const storage = getStorage(app)
+    const imgFileName = new Date().getTime() + imgFile.name
+    const storageRef = ref(storage, imgFileName)
+    const uploadTask = uploadBytesResumable(storageRef, imgFile)
+
+    uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        console.log(progress);
+        setFileUploadPerc(Math.round(progress))
+      },
+      (error) => { setFileUploadErr(true) },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => 
+          setFormData({ ...formData, avatar:downloadUrl })
+        )
+      }
+    )
+  }
+  console.log(formData);
+
   return (
     <div className='max-w-prose mx-auto'>
       <div className="relative inline-block text-left bg-slate-200 mt-6 w-full">
@@ -46,7 +81,18 @@ export default function Profile() {
           >
             <div>
               <div className='max-w-full mx-auto'>
-                <img className='rounded-full mx-auto mt-4' src={currentUser.avatar} alt="Profile Picture" />
+                <input type="file" ref={fileRef} hidden accept='image/*' onChange={ (e) => setImgFile(e.target.files[0]) }/>
+                <img onClick={ () => fileRef.current.click() } className='rounded-full mx-auto my-4 w-24 h-24 hover:cursor-pointer' src={formData.avatar || currentUser.avatar} alt="Profile Picture" />
+                <p className='text-sm text-center'>
+                  { fileUploadErr ? (
+                     <span className='text-red-700'>Error Image Upload ( Image size should be less than 2mb)</span>
+                     ) : fileUploadPerc > 0 && fileUploadPerc < 100 ? (
+                      <span className='text-slate-700'>{`Uploading %${fileUploadPerc}`}</span>
+                     ) : fileUploadPerc === 100 ? (
+                      <span className='text-green-700'>Image Uploaded Successfully!</span>
+                     ) : ('')
+                  }
+                </p>
                 <form className='flex flex-col gap-6 py-8 px-6 rounded-md bg-slate-200' onSubmit={handleSubmit}>
                   <input
                     type="text" 
