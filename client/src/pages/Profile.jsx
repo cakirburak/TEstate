@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase';
@@ -13,7 +14,7 @@ import {
   signOutUserSuccess,
   signOutUserFailure
 } from '../redux/user/userSlice.js'
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaPlus } from "react-icons/fa";
 
 
 export default function Profile() {
@@ -138,7 +139,8 @@ export default function Profile() {
         <button
           className="inline-flex justify-between w-full items-center px-6 py-2 text-slate-600 hover:text-gray-800 focus:outline-none"
           onClick={toggleDropdown}
-        >Profile
+        >
+          Profile
           <span className="text-lg">{isOpen ? <FaArrowUp /> : <FaArrowDown />}</span>
         </button>
         {isOpen && (
@@ -198,6 +200,7 @@ export default function Profile() {
           </div>
         )}
       </div>
+      <Link className='flex items-center justify-around bg-green-400 rounded-lg mt-6 w-1/4 mx-auto p-2' to={'/create-listing'}>Add Listing<FaPlus /></Link>
     </div>
   )
 }
