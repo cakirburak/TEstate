@@ -44,7 +44,7 @@ export default function SignUp() {
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
-      <form className='flex flex-col gap-6 py-16 px-4 mt-20 rounded-lg bg-slate-200' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-6 py-16 px-4 mt-4 sm:mt-20 rounded-lg bg-slate-200' onSubmit={handleSubmit}>
         <h1 className='text-3xl text-center font-semibold mb-6'>Sign up</h1>
         <input
           type="text" 

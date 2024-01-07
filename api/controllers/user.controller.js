@@ -12,11 +12,9 @@ export const test = (req, res) => {
 export const updateUser = async (req, res, next) => {
     if(req.user.id !== req.params.id) return next(errorHandler(401, 'Unauthorized Access!'))
     try {
-
         if(req.body.password) {
             req.body.password = bcryptjs.hashSync(req.body.password, 10)
         }
-
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
             // $set will update the fields that already updated and ignores the rest
             $set:{
@@ -26,10 +24,8 @@ export const updateUser = async (req, res, next) => {
                 avatar: req.body.avatar,
             }
         },{new:true})
-
         const { password, ...rest } = updatedUser._doc
         res.status(200).json(rest) 
-
     } catch (error) {
         next(error)
     }

@@ -8,7 +8,10 @@ import {
   updateUserFailure,
   deleteUserStart,
   deleteUserSuccess,
-  deleteUserFailure
+  deleteUserFailure,
+  signOutUserStart,
+  signOutUserSuccess,
+  signOutUserFailure
 } from '../redux/user/userSlice.js'
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
@@ -107,6 +110,22 @@ export default function Profile() {
     }
   }
 
+  const handleLogOut = async () => {
+    try {
+      dispatch(signOutUserStart())
+      const req = await fetch('/api/auth/signout', {
+        method: 'GET'
+      })
+      const data = await req.json()
+      if(data.success != true){
+        dispatch(signOutUserFailure(data.message))
+      }
+      dispatch(signOutUserSuccess(data))
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message))
+    }
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   
   const toggleDropdown = () => {
@@ -171,7 +190,7 @@ export default function Profile() {
                   { error && <p className='text-center text-red-700'>{error}</p>}
                   <div className="flex justify-between mt-5 mx-1">
                     <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
-                    <span className="text-blue-700 cursor-pointer">Sign out</span>
+                    <span onClick={handleLogOut} className="text-blue-700 cursor-pointer">Sign out</span>
                   </div>
                 </form>
               </div>
