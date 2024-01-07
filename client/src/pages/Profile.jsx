@@ -2,7 +2,16 @@ import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase';
-import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice.js'
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure
+} from '../redux/user/userSlice.js'
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+
 
 export default function Profile() {
 
@@ -12,8 +21,10 @@ export default function Profile() {
   const [fileUploadErr, setFileUploadErr] = useState(false)
 
   const [formData, setFormData] = useState({})
-  const [formChanged, setFormChanged] = useState(false)  
+  const [formChanged, setFormChanged] = useState(false)
+  const [updateSuccess, setUpdateSuccess] = useState(false)
   const { currentUser,loading, error } = useSelector(state => state.user)
+
   const dispatch = useDispatch()
   
   const handleChange = (e) => {
@@ -42,6 +53,7 @@ export default function Profile() {
       }
       
       dispatch(updateUserSuccess(data))
+      setUpdateSuccess(true)
       setFormChanged(false)
     } catch (error) {
       dispatch(updateUserFailure(error.message))
@@ -75,6 +87,26 @@ export default function Profile() {
     )
   }
 
+  const handleDeleteUser = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete your account? This action is irreversible and will permanently delete all associated data!')
+    if(confirmDelete){
+      try {
+        dispatch(deleteUserStart())
+        const req = await fetch(`/api/user/delete/${currentUser._id}`, {
+          method: 'DELETE'
+        })
+
+        const data = await req.json()
+        if(data.success != true) {
+          dispatch(deleteUserFailure(data.message))
+        }
+        dispatch(deleteUserSuccess(data))
+      } catch (error) {
+        dispatch(deleteUserFailure(error.message))
+      }
+    }
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   
   const toggleDropdown = () => {
@@ -88,9 +120,8 @@ export default function Profile() {
           className="inline-flex justify-between w-full items-center px-6 py-2 text-slate-600 hover:text-gray-800 focus:outline-none"
           onClick={toggleDropdown}
         >Profile
-          <span className="text-lg">▾</span> {/* Minimal menu icon */}
+          <span className="text-lg">{isOpen ? <FaArrowUp /> : <FaArrowDown />}</span>
         </button>
-
         {isOpen && (
           <div className="max-w-full mx-auto origin-top-right relative right-0 mt-2 rounded-md shadow-lg">
             <div>
@@ -136,9 +167,10 @@ export default function Profile() {
                     className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-70'>
                       {loading ?  'Loading...' : 'Update'}
                   </button>
+                  { updateSuccess && <p className='text-center text-green-700'>Update has completed successfully!</p>}
                   { error && <p className='text-center text-red-700'>{error}</p>}
                   <div className="flex justify-between mt-5 mx-1">
-                    <span className="text-red-700 cursor-pointer">Delete account</span>
+                    <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
                     <span className="text-blue-700 cursor-pointer">Sign out</span>
                   </div>
                 </form>
