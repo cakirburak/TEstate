@@ -28,6 +28,8 @@ export default function Profile() {
   const [formChanged, setFormChanged] = useState(false)
   const [updateSuccess, setUpdateSuccess] = useState(false)
   const { currentUser,loading, error } = useSelector(state => state.user)
+  const [userListings, setUserListings] = useState([])
+  const [showListingError, setShowListingError] = useState(false)
 
   const dispatch = useDispatch()
   
@@ -131,7 +133,22 @@ export default function Profile() {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   }
-  
+
+  const handleBringListings = async () => {
+    try {
+      setShowListingError(false)
+      const req = await fetch(`/api/user/listings/${currentUser._id}`)
+      const data = await req.json()
+      if(data.success != true){
+        setShowListingError(data.message)
+      }
+      setUserListings(data)
+    } catch (error) {
+      setShowListingError(error)
+    }
+  }
+  // console.log(userListings);
+
   return (
     <div className='max-w-prose mx-auto'>
       <div className="relative inline-block text-left bg-slate-200 mt-6 w-full">
@@ -199,7 +216,22 @@ export default function Profile() {
           </div>
         )}
       </div>
-      <Link className='flex items-center justify-around bg-green-400 rounded-lg mt-6 w-1/4 mx-auto p-2' to={'/create-listing'}>Add Listing<FaPlus /></Link>
+      <Link className='flex items-center justify-around bg-green-400 rounded-lg mt-6 w-2/5 sm:w-1/4 mx-auto p-2' to={'/create-listing'}>Add Listing<FaPlus /></Link>
+      <div className="w-full mx-auto flex flex-col items-center my-6 gap-3">
+        <button className='p-2 mb-2 bg-yellow-300 w-2/5 sm:w-1/4 rounded-lg' onClick={handleBringListings}>Show My Listings</button>
+        { userListings && userListings.length > 0 && userListings.map(listing => (
+          <div className="flex border w-full border-slate-300 items-center">
+            <Link className='flex items-center w-full' to={`/listing/${listing._id}`}>
+              <img src={listing.imageUrls[0]} alt="listing-cover" className='w-28 h-28 p-3 object-contain'/>
+              <p className='text-lg font-semibold w-full px-3'>{listing.title}</p>
+            </Link>
+            <div className="flex flex-col px-3 gap-2">
+              <button className='p-2 text-yellow-500'>Edit</button>
+              <button className='p-2 text-red-500'>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
