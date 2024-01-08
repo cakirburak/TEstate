@@ -79,7 +79,6 @@ export default function Profile() {
 
     uploadTask.on('state_changed', (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        console.log(progress);
         setFileUploadPerc(Math.round(progress))
       },
       (error) => { setFileUploadErr(true) },
