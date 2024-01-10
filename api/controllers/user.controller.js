@@ -4,10 +4,14 @@ import { errorHandler } from "../utils/error.js"
 import bcryptjs from 'bcryptjs'
 
 
-export const test = (req, res) => {
-    res.json({
-        message: 'Test API!'
-    })
+export const getUserInfo = async (req, res, next) => {
+    try {
+        const userInfo = await User.findById(req.params.id)
+        const { password, ...rest } = userInfo._doc
+        res.status(200).json(rest)
+    } catch (error) {
+        next(error)
+    }
 }
 
 export const updateUser = async (req, res, next) => {
