@@ -13,13 +13,13 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
-mongoose.connect(process.env.MONGO)
-.then(() => {
-    console.log("Connected to MongoDB")
-})
-.catch((err) => {
-    console.log(err)
-})
+const runMongoDBConnection = async () => {
+    await mongoose.connect(process.env.MONGO)
+    .then(() => {
+        console.log("Connected to MongoDB")
+    })
+}
+runMongoDBConnection().catch((err) => console.error(err))
 
 app.listen(3000, () => {
     console.log(`Server is running on port ${port}`)

@@ -119,7 +119,7 @@ export default function Profile() {
         method: 'GET'
       })
       const data = await req.json()
-      if(data.success != true){
+      if(data.success === false){
         dispatch(signOutUserFailure(data.message))
       }
       dispatch(signOutUserSuccess(data))
@@ -139,7 +139,7 @@ export default function Profile() {
       setShowListingError(false)
       const req = await fetch(`/api/user/listings/${currentUser._id}`)
       const data = await req.json()
-      if(data.success != true){
+      if(data.success === false){
         setShowListingError(data.message)
       }
       setUserListings(data)
@@ -147,8 +147,29 @@ export default function Profile() {
       setShowListingError(error)
     }
   }
-  // console.log(userListings);
 
+  const handleDeleteListing = async (listingId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete your listing? This action is irreversible and will permanently delete all associated data!')
+    if(confirmDelete){
+      try {
+        const req = await fetch(`/api/listing/delete/${listingId}`,{
+          method: 'DELETE',
+        })
+        const data = await req.json()
+        
+        if(data.success === false){
+          console.log(data.message);
+          return;
+        }
+        
+        setUserListings((prevListing) => prevListing.filter((listing) => listing._id !== listingId))
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+  
   return (
     <div className='max-w-prose mx-auto'>
       <div className="relative inline-block text-left bg-slate-200 mt-6 w-full">
@@ -220,14 +241,16 @@ export default function Profile() {
       <div className="w-full mx-auto flex flex-col items-center my-6 gap-3">
         <button className='p-2 mb-2 bg-yellow-300 w-2/5 sm:w-1/4 rounded-lg' onClick={handleBringListings}>Show My Listings</button>
         { userListings && userListings.length > 0 && userListings.map(listing => (
-          <div className="flex border w-full border-slate-300 items-center">
+          <div key={listing._id} className="flex border w-full border-slate-300 items-center">
             <Link className='flex items-center w-full' to={`/listing/${listing._id}`}>
-              <img src={listing.imageUrls[0]} alt="listing-cover" className='w-28 h-28 p-3 object-contain'/>
-              <p className='text-lg font-semibold w-full px-3'>{listing.title}</p>
+              <img src={listing.imageUrls[0]} alt="listing-cover" className='object-cover w-28 h-28 p-3'/>
+              <p className='text-lg font-semibold px-3'>{listing.title}</p>
             </Link>
             <div className="flex flex-col px-3 gap-2">
-              <button className='p-2 text-yellow-500'>Edit</button>
-              <button className='p-2 text-red-500'>Delete</button>
+              <Link to={`/update-listing/${listing._id}`}>
+                <button className='p-2 text-yellow-500'>Edit</button>
+              </Link>
+              <button onClick={() => handleDeleteListing(listing._id)} className='p-2 text-red-500'>Delete</button>
             </div>
           </div>
         ))}
