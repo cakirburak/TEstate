@@ -1,14 +1,29 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Search() {
 
+
+    // dropdown utils
+    const [selectedOption, setSelectedOption] = useState('Latest');
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef();
+    const options = ['Latest', 'Oldest', 'price high to low', 'price low to high'];
+    //
+
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams(); // to get the prev query data
+    const [listingData, setListingData] = useState([])
+    const navigate = useNavigate()
     const [searchFormData, setSearchFormData] = useState({
-        type: '',
+        type: 'all',
         offer: false,
         furnished: false,
         parking: false,
-        sort: 'createdAt'
-      })
+        sort: 'createdAt',
+        order: 'desc'
+    })
 
     const handleFormChange = (e) => {
         if(e.target.id === 'sale' || e.target.id === 'rent') {
@@ -24,36 +39,91 @@ export default function Search() {
                 [e.target.id]: e.target.checked,
             })
         }
-
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const searchTermFromUrl = searchParams.get('searchTerm')
+        const urlParams = new URLSearchParams()
+        urlParams.set('searchTerm',searchTermFromUrl)
+        urlParams.set('type',searchFormData.type)
+        urlParams.set('offer',searchFormData.offer)
+        urlParams.set('furnished',searchFormData.furnished)
+        urlParams.set('parking',searchFormData.parking)
+        urlParams.set('sort',searchFormData.sort)
+        urlParams.set('order',searchFormData.order)
+        const searchQuery = urlParams.toString()
+        navigate(`/search?${searchQuery}`)
 
+        try {
+            setLoading(true)
+            const res = await fetch(`/api/listing/get?${searchQuery}`)
+            const data = await res.json()
+            if(data.success === false){
+                setError(true)
+                return
+            }
+            setError(false)
+            setLoading(false)
+            setListingData(data)
+        } catch (error) {
+            setError(true)
+        }
     }
-    console.log(searchFormData);
 
-    // dropdown utils
-    const [selectedOption, setSelectedOption] = useState('Latest');
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef();
-  
-    const options = ['Latest', 'Oldest', 'price high to low', 'price low to high'];
-  
+    useEffect(() => {
+        setSearchFormData({
+            type: 'all',
+            offer: false,
+            furnished: false,
+            parking: false,
+            sort: 'createdAt',
+            order: 'desc'
+        })
+
+        const fetchListings = async () => {
+            try {
+                setLoading(true)
+                const res = await fetch(`/api/listing/get?${searchParams.toString()}`)
+                const data = await res.json()
+                if(data.success === false){
+                    setError(true)
+                    return
+                }
+                setError(false)
+                setLoading(false)
+                setListingData(data)
+            } catch (error) {
+                setError(true)
+            }
+        }
+        fetchListings()
+
+    },[searchParams.get('searchTerm')])
+
+
     const handleOptionChange = (option) => {
         const optionIndex = options.indexOf(option)
+        let order,sort = ''
         switch (optionIndex) {
             case 0:
-                console.log(optionIndex);
+                sort = 'createdAt'
+                order = 'desc'
                 break;
             case 1:
+                sort = 'createdAt'
+                order = 'asc'
                 break;
             case 2:
+                sort = 'regularPrice'
+                order = 'desc'
                 break;
             case 3:
-                break;
-            default:
+                sort = 'regularPrice'
+                order = 'asc'
                 break;
         }
+        setSearchFormData({ ...searchFormData, sort: sort, order: order})
         setSelectedOption(option);
         closeDropdown();
     };
@@ -65,6 +135,8 @@ export default function Search() {
     const closeDropdown = () => {
         setIsOpen(false);
     };
+
+    // console.log(searchFormData);
 
     return (
         <div className="px-3 py-8 max-w-7xl mx-auto bg-slate-200 mt-6 shadow-xl">
@@ -161,7 +233,7 @@ export default function Search() {
                                 )}
                             </div>
                         </div>
-                        <button className='w-full py-1 bg-slate-100 text-center rounded-md mt-5'>Search</button>
+                        <button className='w-full py-1 bg-slate-700 text-center text-white rounded-md mt-5'>Search</button>
                     </form>
                 </div>
                 <div className="flex w-full">
