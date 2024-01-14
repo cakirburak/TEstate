@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { FaLocationDot, FaBed, FaBath} from 'react-icons/fa6';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Search() {
@@ -84,7 +85,10 @@ export default function Search() {
         const fetchListings = async () => {
             try {
                 setLoading(true)
-                const res = await fetch(`/api/listing/get?${searchParams.toString()}`)
+                const urlParams = new URLSearchParams()
+                urlParams.set('searchTerm', searchParams.get('searchTerm'))
+                const searchQuery = urlParams.toString()
+                const res = await fetch(`/api/listing/get?${searchQuery}`)
                 const data = await res.json()
                 if(data.success === false){
                     setError(true)
@@ -93,6 +97,7 @@ export default function Search() {
                 setError(false)
                 setLoading(false)
                 setListingData(data)
+                navigate(`/search?${searchQuery}`)
             } catch (error) {
                 setError(true)
             }
@@ -136,18 +141,16 @@ export default function Search() {
         setIsOpen(false);
     };
 
-    // console.log(searchFormData);
-
     return (
         <div className="px-3 py-8 max-w-7xl mx-auto bg-slate-200 mt-6 shadow-xl">
-            <div className="flex flex-col sm:flex-row gap-4 mx-4">
-                <div className="flex w-full sm:w-1/4 bg-slate-300 rounded-lg">
+            <div className="flex flex-col sm:flex-row gap-2 mx-2 sm:gap-3 sm:me-0">
+                <div className="flex w-full sm:w-1/4 bg-slate-300 rounded-lg self-start mb-2">
                     <form className='p-4 w-full' onSubmit={handleSubmit}>
-                        <p className='font-semibold pb-1'>Type</p>
+                        <p className='font-semibold pb-1 hover:cursor-default'>Type</p>
                         <label className="flex flex-row items-center ps-2">
                             <input
                                 type="radio"
-                                className="form-radio text-indigo-600"
+                                className="form-radio text-indigo-600 hover:cursor-pointer"
                                 id="rent"
                                 checked={searchFormData.type === 'rent'}
                                 onChange={handleFormChange}
@@ -157,7 +160,7 @@ export default function Search() {
                         <label className="flex flex-row items-center ps-2">
                             <input
                                 type="radio"
-                                className="form-radio text-indigo-600"
+                                className="form-radio text-indigo-600 hover:cursor-pointer"
                                 id="sale"
                                 checked={searchFormData.type === 'sale'}
                                 onChange={handleFormChange}
@@ -165,9 +168,10 @@ export default function Search() {
                             <span className="ml-2">Sale</span>
                         </label>
                         <hr className='my-2 h-0.5 bg-slate-400' />
-                        <p className='font-semibold pb-1'>Offer</p>
+                        <p className='font-semibold pb-1 hover:cursor-default'>Offer</p>
                         <label className="flex flex-row items-center ps-2">
                             <input
+                                className='hover:cursor-pointer'
                                 type="checkbox" id='offer'
                                 onChange={handleFormChange}
                                 checked={searchFormData.offer}
@@ -175,9 +179,10 @@ export default function Search() {
                             <span className="ml-2">Discount</span>
                         </label>
                         <hr className='my-2 h-0.5 bg-slate-400' />
-                        <p className='font-semibold pb-1'>Amenities</p>
+                        <p className='font-semibold pb-1 hover:cursor-default'>Amenities</p>
                         <label className="flex flex-row items-center ps-2">
                             <input
+                                className='hover:cursor-pointer'
                                 type="checkbox" id='parking'
                                 onChange={handleFormChange}
                                 checked={searchFormData.parking}
@@ -186,6 +191,7 @@ export default function Search() {
                         </label>
                         <label className="flex flex-row items-center ps-2">
                             <input
+                                className='hover:cursor-pointer'
                                 type="checkbox" id='furnished'
                                 onChange={handleFormChange}
                                 checked={searchFormData.furnished}
@@ -194,7 +200,7 @@ export default function Search() {
                         </label>
                         <hr className='my-2 h-0.5 bg-slate-400' />
                         <div className="container relative" ref={dropdownRef}>
-                            <p className='font-semibold pb-1'>Sort</p>
+                            <p className='font-semibold pb-1 hover:cursor-default'>Sort</p>
                             <div className="relative w-full inline-block text-left">
                                 <button
                                 type="button"
@@ -236,8 +242,38 @@ export default function Search() {
                         <button className='w-full py-1 bg-slate-700 text-center text-white rounded-md mt-5'>Search</button>
                     </form>
                 </div>
-                <div className="flex w-full">
-                    asdasd
+                <div className="flex w-full flex-wrap gap-2 flex-col sm:flex-row mx-auto">
+                { loading ? <p className='text-center w-full mt-4'>Loading...</p> : listingData.length == 0 ?
+                    <p className='text-center w-full mt-4'>There is no listing for your search criteria(s)</p>
+                    :
+                    listingData.map(listing => (
+                            <div className="w-full sm:w-80 shadow-md hover:shadow-xl hover:cursor-pointer rounded-lg mb-2" key={listing._id}
+                                onClick={() => { navigate(`/listing/${listing._id}`)}}
+                            >
+                                <img src={listing.imageUrls[0]} className='w-full h-60 object-cover rounded-t-lg' alt="" />
+                                <div className="space-y-2 p-3">
+                                    <h3 className="text-xl font-semibold text-nowrap truncate">
+                                        {listing.title}
+                                    </h3>
+                                    <p className="flex items-center gap-2 sm:mb-4 truncate"><FaLocationDot />{listing.address}</p>
+                                    <p className="text-gray-600 line-clamp-3 text-sm min-h-auto sm:min-h-16">
+                                        {listing.description}
+                                    </p>
+                                    <div className="flex flex-row gap-1">
+                                        $<p className={`${listing.offer ? 'line-through' : ''}`}>{listing.regularPrice}{listing.type === 'rent' && !listing.offer ? <span className="italic"> / month</span> : ''}</p>
+                                        { !listing.offer ? null : <p>-</p> }
+                                        { !listing.offer ? null :
+                                            <p>{listing.discountPrice}{listing.type === 'rent' ? <span className="italic"> / month</span> : ''}</p>
+                                        }
+                                    </div>
+                                    <div className="flex flex-row gap-5">
+                                        <p className='flex items-center gap-1 text-lg'>{listing.bedrooms}<FaBed /></p>
+                                        <p className='flex items-center gap-1 text-lg'>{listing.bathrooms}<FaBath /></p>
+                                    </div>
+                                </div>
+                            </div>
+                    ))
+                }
                 </div>
             </div>
         </div>

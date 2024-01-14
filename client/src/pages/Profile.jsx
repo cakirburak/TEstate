@@ -29,6 +29,7 @@ export default function Profile() {
   const [updateSuccess, setUpdateSuccess] = useState(false)
   const { currentUser,loading, error } = useSelector(state => state.user)
   const [userListings, setUserListings] = useState([])
+  const [listingLoading, setListingLoading] = useState(false)
   const [showListingError, setShowListingError] = useState(false)
 
   const dispatch = useDispatch()
@@ -137,12 +138,17 @@ export default function Profile() {
   const handleBringListings = async () => {
     try {
       setShowListingError(false)
+      setListingLoading(true)
       const req = await fetch(`/api/user/listings/${currentUser._id}`)
       const data = await req.json()
       if(data.success === false){
         setShowListingError(data.message)
+        setListingLoading(false)
+        setShowListingError(data.message)
+        return
       }
       setUserListings(data)
+      setListingLoading(false)
     } catch (error) {
       setShowListingError(error)
     }
@@ -240,7 +246,7 @@ export default function Profile() {
       <Link className='flex items-center justify-around bg-green-400 rounded-lg mt-6 w-2/5 sm:w-1/4 mx-auto p-2' to={'/create-listing'}>Add Listing<FaPlus /></Link>
       <div className="w-full mx-auto flex flex-col items-center my-6 gap-3">
         <button className='p-2 mb-2 bg-yellow-300 w-2/5 sm:w-1/4 rounded-lg' onClick={handleBringListings}>Show My Listings</button>
-        { userListings && userListings.length > 0 && userListings.map(listing => (
+        { listingLoading ? <p className='text-center w-full'>Loading...</p> : userListings && userListings.length > 0 && userListings.map(listing => (
           <div key={listing._id} className="flex border w-full border-slate-300 items-center">
             <Link className='flex items-center w-full' to={`/listing/${listing._id}`}>
               <img src={listing.imageUrls[0]} alt="listing-cover" className='object-cover w-28 h-28 p-3'/>
