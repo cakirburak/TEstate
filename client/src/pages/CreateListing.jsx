@@ -117,7 +117,6 @@ export default function CreateListing() {
     const fileRef = ref(storage, url)
     const auth = getAuth(app)
     await deleteObject(fileRef, auth).then(() => {
-      console.log('File Deleted from Firebase!');
     }).catch((error) => console.log(error))
   }
 
