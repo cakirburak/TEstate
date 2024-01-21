@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { FaLocationDot, FaBed, FaBath} from 'react-icons/fa6';
+import { FaLocationDot, FaBed, FaBath, FaCouch, FaCarSide} from 'react-icons/fa6';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Search() {
@@ -247,7 +247,7 @@ export default function Search() {
                     <p className='text-center w-full mt-4'>There is no listing for your search criteria(s)</p>
                     :
                     listingData.map(listing => (
-                            <div className="w-full sm:w-80 shadow-md hover:shadow-xl hover:cursor-pointer rounded-lg mb-2" key={listing._id}
+                            <div className="w-full bg-slate-200 sm:w-80 shadow-md hover:shadow-xl hover:cursor-pointer rounded-lg mb-2" key={listing._id}
                                 onClick={() => { navigate(`/listing/${listing._id}`)}}
                             >
                                 <img src={listing.imageUrls[0]} className='w-full h-60 object-cover rounded-t-lg' alt="" />
@@ -269,6 +269,9 @@ export default function Search() {
                                     <div className="flex flex-row gap-5">
                                         <p className='flex items-center gap-1 text-lg'>{listing.bedrooms}<FaBed /></p>
                                         <p className='flex items-center gap-1 text-lg'>{listing.bathrooms}<FaBath /></p>
+                                        {listing.furnished && <p className='flex items-center gap-2 text-lg'> <FaCouch /></p> }
+                                        {listing.parking && <p className='flex items-center gap-2 text-lg'> <FaCarSide /></p> }
+
                                     </div>
                                 </div>
                             </div>
