@@ -4,7 +4,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Search() {
 
-
     // dropdown utils
     const [selectedOption, setSelectedOption] = useState('Latest');
     const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +24,7 @@ export default function Search() {
         sort: 'createdAt',
         order: 'desc'
     })
+    const [showMore, setShowMore] = useState(false)
 
     const handleFormChange = (e) => {
         if(e.target.id === 'sale' || e.target.id === 'rent') {
@@ -64,6 +64,11 @@ export default function Search() {
                 setError(true)
                 return
             }
+            if (data.length > 8) {
+                setShowMore(true)
+            }else {
+                setShowMore(false)
+            }
             setError(false)
             setLoading(false)
             setListingData(data)
@@ -94,6 +99,11 @@ export default function Search() {
                     setError(true)
                     return
                 }
+                if (data.length > 8) {
+                    setShowMore(true)
+                }else {
+                    setShowMore(false)
+                }
                 setError(false)
                 setLoading(false)
                 setListingData(data)
@@ -106,6 +116,19 @@ export default function Search() {
 
     },[searchParams.get('searchTerm')])
 
+    const onShowMoreClick = async () => {
+        const numberOfListings = listingData.length
+        const startIndex = numberOfListings
+        const urlParams = new URLSearchParams(location.search)
+        urlParams.set('startIndex', startIndex)
+        const searchQuery = urlParams.toString()
+        const res = await fetch(`/api/listing/get?${searchQuery}`)
+        const data = await res.json()
+        if(data.length < 9) {
+            setShowMore(false)
+        }
+        setListingData([...listingData, ...data])
+    }
 
     const handleOptionChange = (option) => {
         const optionIndex = options.indexOf(option)
@@ -277,6 +300,7 @@ export default function Search() {
                             </div>
                     ))
                 }
+                { showMore && <button className='mx-auto px-4 py-1 my-2 flex bg-slate-300 rounded-lg' onClick={onShowMoreClick}>Show more</button> }
                 </div>
             </div>
         </div>
