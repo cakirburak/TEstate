@@ -12,6 +12,7 @@ import PrivateProfileRoute from './components/PrivateProfileRoute';
 import UpdateListing from './pages/UpdateListing';
 import Listing from './pages/Listing';
 import Search from './pages/Search';
+import { Footer } from './components/Footer';
 
 export default function App() {
   return <BrowserRouter>
@@ -29,5 +30,6 @@ export default function App() {
       </Route>
       <Route path='/listing/:listingId' element={<Listing />}></Route>
     </Routes>
+    <Footer />
   </BrowserRouter>;
 }

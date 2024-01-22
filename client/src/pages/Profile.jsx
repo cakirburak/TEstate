@@ -129,7 +129,7 @@ export default function Profile() {
     }
   }
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
