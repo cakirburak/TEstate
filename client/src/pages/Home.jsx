@@ -49,7 +49,7 @@ export default function Home() {
 	return (
 		<div>
 			<div className="relative w-full">
-				<img className='select-none relative' src="../../data/img/home-banner.jpeg" alt="Banner" />
+				<img className='select-none relative' src="https://imgtr.ee/images/2024/01/23/6bdd5be21af549fdc84b24b73fbc1415.jpeg" alt="Banner" />
 				<Link
 					to={'/search?searchTerm='}
 					className='flex  items-center gap-2 absolute left-1/2 transform -translate-x-1/2 bottom-5 sm:bottom-16 md:bottom-32 border border-slate-700  text-sm sm:text-lg text-slate-600 bg-slate-200 hover:bg-slate-300 px-2 py-1 sm:px-4 sm:py-2 rounded-lg'>
