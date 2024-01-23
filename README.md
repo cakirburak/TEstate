@@ -31,7 +31,8 @@
 
 * Authorization, sign-in & sign-up
 * Profile customization
-* Create listing, update listing 
+* Create listing, update listing
+* Search and filter listings
 * Cross platform
   - Windows, macOS, Linux and Mobile ready.
 
@@ -67,6 +68,7 @@ This software uses the following open source packages:
 
 - [React](https://react.dev/)
 - [Redux](https://redux.js.org/)
+- [Tailwind](https://tailwindcss.com/)
 - [Node.js](https://nodejs.org/)
 - [Vite | Next Generation Frontend Tooling](https://vitejs.dev/)
 - [MongoDB](https://www.mongodb.com/)
