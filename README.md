@@ -31,8 +31,7 @@
 * Profile customization
 * Create listing, update listing
 * Search and filter listings
-* Cross platform
-  - Windows, macOS, Linux and Mobile ready.
+* Fully Responsive
 
 ## How To Use
 
