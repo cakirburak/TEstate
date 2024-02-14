@@ -1,48 +1,31 @@
+# TEstate
 
-<h1 align="center">
-  <br>
-  <a href="https://testate.onrender.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Vitejs-logo.svg" alt="Markdownify" width="200"></a>
-  <br>
-  TEstate
-  <br>
-</h1>
+TEstate is a real estate management platform that allows users to create accounts, upload property listings, and interact with clients through the application.
+- [Demo](https://testate.onrender.com/)
+- [System Design Document](https://woolly-society-a2b.notion.site/System-Design-Document-TEstate-9258aa398b864ec38566850ccaf70175?pvs=4)
+## Features
 
-<h4 align="center">A minimal Real Estate app built on top of <a href="https://www.mongodb.com/mern-stack" target="_blank">MERN</a>.</h4>
+- **User Account Management**: Users can register accounts and authenticate using email/password or "sign in with Google" feature.
+- **Property Listing Management**: Authenticated users can upload property listings, including images, descriptions, and pricing information.
+- **Client Interaction**: Clients can browse property listings, make inquiries, and schedule viewings through the application.
+- **Responsive UI**: Built with React and styled with Tailwind CSS, TEstate provides a smooth and responsive user experience.
 
-<p align="center">
-  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/cakirburak/TEstate-MERN">
-  <img alt="NPM Version" src="https://img.shields.io/npm/v/npm">
-  <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/cakirburak/TEstate-MERN">
-  <a href="https://www.buymeacoffee.com/cakirburak">
-    <img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat">
-  </a>
-</p>
+## Technologies Used
 
-<p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#how-to-use">How To Use</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#license">License</a>
-</p>
+- **Frontend**: React, Redux, Tailwind CSS
+- **Backend**: Node.js, Express.js, MongoDB
+- **Authentication**: JWT (JSON Web Tokens), Firebase Authentication
 
-## Key Features
+## Installation
 
-* Authorization, sign-in & sign-up
-* Profile customization
-* Create listing, update listing
-* Search and filter listings
-* Fully Responsive
-
-## How To Use
-
-To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) installed on your computer. From your command line:
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/cakirburak/TEstate-MERN.git
+$ git clone https://github.com/your-username/TEstate.git
 
 # Go into the repository
-$ cd TEstate-MERN
+$ cd TEstate
 
 # Install dependencies
 $ npm install && npm install --prefix client
@@ -54,33 +37,13 @@ $ npm run dev
 $ cd client/
 $ npm run dev
 ```
-
 > **Note**
-> Make sure you have the enviromental variables; `MONGO` and `JWT_SECRET` for api, `VITE_FIREBASE_API_KEY` for client.
+> Make sure you set enviromental variables; `MONGO`, `JWT_SECRET`, `VITE_FIREBASE_API_KEY`.
 
+## Contributing
 
-## Credits
-
-This software uses the following open source packages:
-
-- [React](https://react.dev/)
-- [Redux](https://redux.js.org/)
-- [Tailwind](https://tailwindcss.com/)
-- [Node.js](https://nodejs.org/)
-- [Vite | Next Generation Frontend Tooling](https://vitejs.dev/)
-- [MongoDB](https://www.mongodb.com/)
-- [FireBase](https://firebase.google.com/)
-- Icons are taken from [here](https://react-icons.github.io/react-icons/)
-
-## Support
-
-<a href="https://www.buymeacoffee.com/cakirburak" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+🙌 Contributions are welcome! If you'd like to contribute to this project, feel free to open a pull request or submit an issue with any suggestions or improvements.
 
 ## License
 
-MIT
-
----
-
-> GitHub [@cakirburak](https://github.com/cakirburak) &nbsp;&middot;&nbsp;
-> Twitter [@cavsiri06](https://twitter.com/cavsiri06)
+📄 This project is licensed under the [MIT License](LICENSE).
