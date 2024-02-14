@@ -1,7 +1,7 @@
 # TEstate
 
 TEstate is a real estate management platform that allows users to create accounts, upload property listings, and interact with clients through the application.
-- [Demo](https://testate.onrender.com/)
+- [Demo](https://testate.onrender.com/) (give it time to load)
 - [System Design Document](https://woolly-society-a2b.notion.site/System-Design-Document-TEstate-9258aa398b864ec38566850ccaf70175?pvs=4)
 ## Features
 
